@@ -39,8 +39,8 @@ const Verification = () => {
 
   console.log("is email verified", currentUser?.emailVerified)
 
-  if (!currentUser?.emailVerified) {
-    return (
+  return (
+    currentUser?.emailVerified === false && (
       <Box>
         <Collapse in={open}>
           <Alert
@@ -49,24 +49,27 @@ const Verification = () => {
               <IconButton
                 aria-label="Close"
                 size="small"
-                onClick={() => setOpen(false)}>
+                onClick={() => setOpen(false)}
+              >
                 <Close fontSize="inherit" />
               </IconButton>
             }
-            sx={{ mb: 3 }}>
-            Your email has not been verified yet
+            sx={{ mb: 3 }}
+          >
+            Your email has not been verified yet!
             <Button
               size="small"
               onClick={verify}
               disabled={isClicked}
-              sx={{ lineHeight: "initial" }}>
-              Verify Now
+              sx={{ lineHeight: 'initial' }}
+            >
+              verify Now
             </Button>
           </Alert>
         </Collapse>
       </Box>
     )
-  } else return <></>
+  )
 }
 
 export default Verification
