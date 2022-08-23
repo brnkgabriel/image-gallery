@@ -37,8 +37,6 @@ const Verification = () => {
     setLoading(false)
   }
 
-  console.log("is email verified", currentUser?.emailVerified)
-
   return (
     currentUser?.emailVerified === false && (
       <Box>

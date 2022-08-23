@@ -1,19 +1,24 @@
-import { Avatar, DialogActions, DialogContent, DialogContentText, TextField } from "@mui/material"
+import { Avatar, DialogActions, DialogContent, DialogContentText, IconButton, TextField } from "@mui/material"
 import { useState } from "react"
 import { useAuth } from "../../context/AuthContext"
 import SubmitButton from "./inputs/SubmitButton"
 import { v4 as uuidv4 } from "uuid"
 import uploadFile from "../../firebase/uploadFile"
 import { updateProfile } from "firebase/auth"
-import deleteFile from "../../firebase/deleteFile"
+import { deleteAll } from "../../firebase/deleteFile"
 import updateUserRecords from "../../firebase/updateUserRecords"
+import CropEasy from "../crop/CropEasy"
+import { Box } from "@mui/system"
+import { Crop } from "@mui/icons-material"
+import { useEffect } from "react"
 
 const Profile = () => {
-  const { currentUser, setLoading, setAlert } = useAuth()
-  const [ name, setName ] = useState(currentUser?.displayName)
-  const [ file, setFile ] = useState(null)
-  const [ photoURL, setPhotoURL ] = useState(currentUser?.photoURL)
-  
+  const { currentUser, setLoading, setAlert, modal, setModal } = useAuth()
+  const [name, setName] = useState(currentUser?.displayName)
+  const [file, setFile] = useState(null)
+  const [photoURL, setPhotoURL] = useState(currentUser?.photoURL)
+  const [openCrop, setOpenCrop] = useState(false)
+
 
   const handleChange = evt => {
     const file = evt.target.files[0]
@@ -21,6 +26,7 @@ const Profile = () => {
     if (file) {
       setFile(file)
       setPhotoURL(URL.createObjectURL(file))
+      setOpenCrop(true)
     }
   }
 
@@ -41,19 +47,9 @@ const Profile = () => {
 
     try {
       if (file) {
+        await deleteAll(`profile/${currentUser?.uid}`)
         const imageName = uuidv4() + "." + file?.name?.split(".")?.pop()
         const url = await uploadFile(file, `profile/${currentUser?.uid}/${imageName}`)
-        
-        if (currentUser?.photoURL) {
-          const prevImage = currentUser?.photoURL?.split(`${currentUser?.uid}%2F`)[1].split("?")[0]
-          if (prevImage) {
-            try {
-              await deleteFile(`profile/${currentUser?.uid}/${prevImage}`)
-            } catch (error) {
-              console.log(error)
-            }
-          }
-        }
 
         userObj = { ...userObj, photoURL: url }
         imagesObj = { ...imagesObj, uPhoto: url }
@@ -83,38 +79,66 @@ const Profile = () => {
     setLoading(false)
   }
 
+  const sxCropAvatar = {
+    display: "flex",
+    alignItems: "center"
+  }
+
+  useEffect(() => {
+    if (openCrop) {
+      setModal({ ...modal, title: "Crop Profile Photo" })
+    } else {
+      setModal({ ...modal, title: "Update Profile" })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openCrop])
   return (
-    <form onSubmit={handleSubmit}>
-      <DialogContent dividers>
-        <DialogContentText>
-          You can update your profile by updating these fields
-        </DialogContentText>
-        <TextField
-          margin="normal"
-          type="text"
-          inputProps={{minLength: 2}}
-          fullWidth
-          variant="standard"
-          value={name || ""}
-          required
-          onChange={e => setName(e.target.value)}
-          autoFocus/>
-        <label htmlFor="profilePhoto">
-          <input
-           id="profilePhoto"
-           type="file"
-           style={sxInput}
-           onChange={handleChange}
-           accept="image/*"/>
-          <Avatar
-           sx={sxAvatar}
-           src={photoURL}/>
-        </label>
-      </DialogContent>
-      <DialogActions>
-        <SubmitButton />
-      </DialogActions>
-    </form>
+    !openCrop ? (
+
+      <form onSubmit={handleSubmit}>
+        <DialogContent dividers>
+          <DialogContentText>
+            You can update your profile by updating these fields
+          </DialogContentText>
+          <TextField
+            margin="normal"
+            type="text"
+            inputProps={{ minLength: 2 }}
+            fullWidth
+            variant="standard"
+            value={name || ""}
+            required
+            onChange={e => setName(e.target.value)}
+            autoFocus />
+          <Box sx={sxCropAvatar}>
+            <label htmlFor="profilePhoto">
+              <input
+                id="profilePhoto"
+                type="file"
+                style={sxInput}
+                onChange={handleChange}
+                accept="image/*" />
+              <Avatar
+                sx={sxAvatar}
+                src={photoURL} />
+            </label>
+            { file && (
+              <IconButton
+                aria-label="Crop"
+                color="primary"
+                onClick={() => setOpenCrop(true)}>
+                <Crop />
+              </IconButton>
+            ) }
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <SubmitButton />
+        </DialogActions>
+      </form>
+    ) : (
+      <CropEasy {...{photoURL, setOpenCrop, setPhotoURL, setFile}} />
+    )
   )
 }
 

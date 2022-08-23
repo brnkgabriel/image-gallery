@@ -1,1 +1,3 @@
-source code: https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbGJoRTgzd3ZWOVljTUJpaU13elRfSGxObWIzd3xBQ3Jtc0tsb1NnZWhmSTFhRUZ6a0NBd05qb0ZseUg5aGt4MnRkTXRVcEVXRFJRSlZ6S3JtLU9pOGV0NlJULTlhQjhaU1pwLXZHTThFT25TampPNXRpNV8tZncxMUxQTG9rRFloLWVicUI4X0haTUJUMmt2MGtzcw&q=https%3A%2F%2Fgithub.com%2Fcodelikepro22%2Freact-firebase-images-gallery&v=74rGC1e77tw
+source code: https://github.com/codelikepro22/react-firebase-images-gallery
+
+remove useEffectWarning: // eslint-disable-next-line react-hooks/exhaustive-deps
