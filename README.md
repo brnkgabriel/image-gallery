@@ -1,4 +1,11 @@
-# Getting Started with Create React App
+# React Firebase Image Gallery
+
+## Features and technologies used
+- ReactJS
+- Firebase Storage
+- Firebase Authentication
+- Firestore Database
+- React Context API
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

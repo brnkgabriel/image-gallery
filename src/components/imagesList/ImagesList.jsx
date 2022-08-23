@@ -7,6 +7,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Avatar from '@mui/material/Avatar';
 import Options from './Options';
 import useFirestore from '../../firebase/useFirestore';
+import { useAuth } from '../../context/AuthContext';
 
 function srcset(image, size, rows = 1, cols = 1) {
   return {
@@ -17,6 +18,7 @@ function srcset(image, size, rows = 1, cols = 1) {
 }
 
 export default function ImagesList() {
+  const { currentUser } = useAuth()
   const { documents } = useFirestore('gallery')
 
   const patternIndex = (index) => index - Math.floor(index / pattern.length) * pattern.length
@@ -60,7 +62,7 @@ export default function ImagesList() {
                 cols={pattern[pIdx].rows}
                 rows={pattern[pIdx].cols}
                 sx={sxImage}>
-                <Options imageId={item?.id} />
+                { currentUser?.uid === item?.data?.uid && ( <Options imageId={item?.id} />) }
                 <img
                   {...srcset(item?.data?.imageURL, 121, pattern[pIdx].rows, pattern[pIdx].cols)}
                   alt={item?.data?.uName || item?.data?.uEmail?.split("@")[0]}

@@ -5,9 +5,10 @@ import { useRef } from 'react'
 import PasswordField from './inputs/PasswordField'
 import { useState } from 'react'
 import SubmitButton from './inputs/SubmitButton'
-import { Google } from '@mui/icons-material'
+import { Google } from '@mui/icons-material' 
 import { useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
+import ResetPassword from './ResetPassword'
 
 const Login = () => {
   const emailRef = useRef()
@@ -109,12 +110,22 @@ const Login = () => {
           <DialogContentText>
             Please enter your email and your password here:
           </DialogContentText>
-          <EmailField { ...{ emailRef } } />
-          <PasswordField { ...{ passwordRef } } />
-          { isRegister && <PasswordField { ...{passwordRef: confirmPasswordRef, id: "confirmPassword", label: "Confirm Password"} } /> }
+          <EmailField { ...{ emailRef, autoFocus: true } } />
+          <PasswordField { ...{ passwordRef, autoFocus: false } } />
+          { isRegister && (
+          <PasswordField 
+            {...{passwordRef: confirmPasswordRef,
+              id: "confirmPassword",
+              label: "Confirm Password",
+              autoFocus: false
+            } } />) }
         </DialogContent>
         <DialogActions sx={sxDialogActions}>
-          <Button size='small'>Forgot Password</Button>
+          <Button size='small' onClick={() => setModal({
+            ...modal,
+            title: "Reset Password",
+            content:<ResetPassword />
+            })}>Forgot Password</Button>
           <SubmitButton />
         </DialogActions>
       </form>

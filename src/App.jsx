@@ -6,6 +6,7 @@ import AuthContext from "./context/AuthContext";
 import Modal from "./components/Modal"
 import MainNotification from "./components/MainNotification";
 import Loading from "./components/Loading";
+import Verification from "./components/user/Verification";
 
 function App() {
   const sxContainer = {
@@ -17,6 +18,7 @@ function App() {
       <AuthContext>
         <Loading />
         <Modal />
+        <Verification />
         <MainNotification />
         <Nav />
         <Upload />

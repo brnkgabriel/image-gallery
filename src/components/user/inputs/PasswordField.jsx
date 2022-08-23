@@ -3,7 +3,12 @@ import React from 'react'
 import { useState } from 'react'
 import { VisibilityOff, Visibility } from "@mui/icons-material"
 
-const PasswordField = ({ passwordRef, id="password", label="password", autoFocus=true }) => {
+const PasswordField = ({
+  passwordRef,
+  id="password",
+  label="password",
+  autoFocus=true
+}) => {
   const [ showPassword, setShowPassword ] = useState(false)
 
   const handleClick = evt => {
@@ -15,7 +20,7 @@ const PasswordField = ({ passwordRef, id="password", label="password", autoFocus
   }
   return (
     <TextField
-      autoFocus
+      autoFocus={autoFocus}
       margin="normal"
       id={id}
       label={label}

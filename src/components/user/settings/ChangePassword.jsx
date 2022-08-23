@@ -50,7 +50,12 @@ const ChangePassword = () => {
           Please Enter your new password:
         </DialogContentText>
         <PasswordField {...{passwordRef}} />
-        <PasswordField {...{passwordRef: confirmPasswordRef, id: "confirmPassword", label: "Confirm Password"}} />
+        <PasswordField {...{
+          passwordRef: confirmPasswordRef,
+          id: "confirmPassword",
+          label: "Confirm Password",
+          autoFocus: false
+          }} />
       </DialogContent>
       <DialogActions>
         <SubmitButton />
