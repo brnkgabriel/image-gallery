@@ -7,7 +7,7 @@
 - Firestore Database
 - React Context API
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). Here's the [Demo](https://coding-test-projects.web.app/)
 
 ## Available Scripts
 
