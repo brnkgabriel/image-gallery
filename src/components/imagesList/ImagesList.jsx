@@ -1,13 +1,14 @@
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
-import SimpleReactLightbox, { SRLWrapper } from 'simple-react-lightbox';
+import Lightbox from 'react-image-lightbox';
+import 'react-image-lightbox/style.css'
 import moment from 'moment';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import Avatar from '@mui/material/Avatar';
 import Options from './Options';
 import useFirestore from '../../firebase/useFirestore';
-import { useAuth } from '../../context/AuthContext';
+import { useState } from 'react';
 
 function srcset(image, size, rows = 1, cols = 1) {
   return {
@@ -18,8 +19,9 @@ function srcset(image, size, rows = 1, cols = 1) {
 }
 
 export default function ImagesList() {
-  const { currentUser } = useAuth()
   const { documents } = useFirestore('gallery')
+  const [ isOpen, setIsOpen ] = useState(false)
+  const [ photoIndex, setPhotoIndex ] = useState(0)
 
   const patternIndex = (index) => index - Math.floor(index / pattern.length) * pattern.length
 
@@ -47,43 +49,69 @@ export default function ImagesList() {
     bottom: "3px",
     right: "3px"
   }
+  // mainSrc={documents[photoIndex]?.data?.imageURL}
+  //         nextSrc={documents[(photoIndex + 1) % documents.length]?.data?.imageURL}
+  //         prevSrc={documents[(photoIndex + documents.length - 1) % documents.length]?.data?.imageURL}
+  const mainSrc = documents[photoIndex]?.data?.imageURL
+  const nextIdx = (photoIndex + 1) % documents.length
+  const nextSrc = documents[nextIdx]?.data?.imageURL
+  const prevIdx = (photoIndex + documents.length - 1) % documents.length
+  const prevSrc = documents[prevIdx]?.data?.imageURL
+  const imTitle = documents[photoIndex]?.data?.uName
+  const caption = documents[photoIndex]?.data?.uEmail
   return (
-    <SimpleReactLightbox>
-      <SRLWrapper>
-        <ImageList
-          variant="quilted"
-          cols={4}
-          rowHeight={200}>
-          {documents.map((item, index) => {
-            const pIdx = patternIndex(index)
-            return (
-              <ImageListItem
-                key={item?.id}
-                cols={pattern[pIdx].rows}
-                rows={pattern[pIdx].cols}
-                sx={sxImage}>
-                { currentUser?.uid === item?.data?.uid && ( <Options imageId={item?.id} />) }
-                <img
-                  {...srcset(item?.data?.imageURL, 121, pattern[pIdx].rows, pattern[pIdx].cols)}
-                  alt={item?.data?.uName || item?.data?.uEmail?.split("@")[0]}
-                  loading="lazy" />
-                <Typography
-                  variant='body2'
-                  component='span'
-                  sx={sxTypography}>
-                  {moment(item?.data?.timestamp?.toDate()).fromNow()}
-                </Typography>
-                <Tooltip
-                  title={item?.data?.uName || item?.data?.uEmail?.split("@")[0]}
-                  sx={sxTooltip}>
-                  <Avatar src={item?.data?.uPhoto} imgProps={{ 'aria-hidden': true }} />
-                </Tooltip>
-              </ImageListItem>
-            )
-          })}
-        </ImageList>
-      </SRLWrapper>
-    </SimpleReactLightbox>
+    <>
+      <ImageList
+        variant="quilted"
+        cols={4}
+        rowHeight={200}>
+        {documents.map((item, index) => {
+          const pIdx = patternIndex(index)
+          return (
+            <ImageListItem
+              key={item?.id}
+              cols={pattern[pIdx].rows}
+              rows={pattern[pIdx].cols}
+              sx={sxImage}>
+              <Options
+                imageId={item?.id}
+                uid={item?.data?.uid}
+                imageURL={item?.data?.imageURL} />
+              <img
+                {...srcset(item?.data?.imageURL, 121, pattern[pIdx].rows, pattern[pIdx].cols)}
+                alt={item?.data?.uName || item?.data?.uEmail?.split("@")[0]}
+                onClick={() => {
+                  setPhotoIndex(index)
+                  setIsOpen(true)
+                }}
+                loading="lazy" />
+              <Typography
+                variant='body2'
+                component='span'
+                sx={sxTypography}>
+                {moment(item?.data?.timestamp?.toDate()).fromNow()}
+              </Typography>
+              <Tooltip
+                title={item?.data?.uName || item?.data?.uEmail?.split("@")[0]}
+                sx={sxTooltip}>
+                <Avatar src={item?.data?.uPhoto} imgProps={{ 'aria-hidden': true }} />
+              </Tooltip>
+            </ImageListItem>
+          )
+        })}
+      </ImageList>
+      { isOpen && (
+        <Lightbox
+          onCloseRequest={() => setIsOpen(false)}
+          onMoveNextRequest={() => setPhotoIndex(nextIdx)}
+          onMovePrevRequest={() => setPhotoIndex(prevIdx)}
+          imageTitle={imTitle}
+          imageCaption={caption}
+          mainSrc={mainSrc}
+          nextSrc={nextSrc}
+          prevSrc={prevSrc}/>
+      ) }
+    </>
   );
 }
 

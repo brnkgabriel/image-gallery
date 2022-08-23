@@ -17,8 +17,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-easy-crop": "^4.5.0",
+    "react-image-lightbox": "^5.1.4",
     "react-scripts": "5.0.1",
-    "simple-react-lightbox": "^3.6.9-0",
     "uuid": "^8.3.2",
     "web-vitals": "^2.1.0"
   },
